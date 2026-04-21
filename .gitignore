@@ -2,3 +2,4 @@ venv
 .venv
 api.md
 *.out
+.env

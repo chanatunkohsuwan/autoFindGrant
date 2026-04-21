@@ -1,13 +1,14 @@
 import requests
 from bs4 import BeautifulSoup, Comment
 from sys import exit
+from os import environ
 
 def clean_html(html: str) -> str:
     """
     Remove HTML that will not be used
     """
-
     soup = BeautifulSoup(html, "html.parser")
+    
     for tag in soup(["script", "style", "noscript", "iframe", "svg"]):
         tag.decompose()
     for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
