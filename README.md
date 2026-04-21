@@ -1,7 +1,19 @@
-haha
-67
-+5123
-=5190
-hahaaaaaaaaaaaaa
-fdrc 5190!!!!!!!!!!
-referefenrece
+
+
+# Scraping
+
+
+
+
+
+
+# Sorting of Sponsors
+### Geographical Data
+- local
+- state
+- national
+
+### Based on Placement
+- county
+- state
+- national
