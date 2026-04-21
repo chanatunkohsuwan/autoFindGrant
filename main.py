@@ -1,9 +1,8 @@
 import requests
 
 url = "https://frc5190.com"
-print("responsinging")
-response = requests.get(url)
-# response.raise_for_status()
-print("responsesd")
 
-print(response)
+response = requests.get(url)
+
+with open("output.out", "w+") as f:
+    f.write(response.text)
