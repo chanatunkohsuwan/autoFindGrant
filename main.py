@@ -1,6 +1,15 @@
+import asyncio
+import os
 import re
 import requests
 from bs4 import BeautifulSoup, Comment
+from mistralai.client import Mistral
+from mistralai.client.models import UserMessage
+
+from dotenv import load_dotenv
+
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+mistral_client = Mistral(api_key=MISTRAL_API_KEY)
 
 def clean_soup(soup: BeautifulSoup):
     # remove useless html filler slop
@@ -29,3 +38,22 @@ page = clean_soup(soup)
 
 with open("output.out", "w", encoding="utf-8") as f:
     f.write(page)
+
+async def request_chat_completion(messages, retries=5):
+    try:
+        response = mistral_client.chat.complete_async(
+            model="mistral-large-latest",
+            messages=messages
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        if retries != 0:
+            return await request_chat_completion(messages, retries=retries-1)
+        else:
+            raise(e)
+        
+async def main():
+    print("hello world")
+
+if __name__ == "__main__":
+    asyncio.run(main())
