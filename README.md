@@ -25,6 +25,7 @@ images and links and text must be preserved for the ai but other than that nothi
 
 # AI API
 mistral api; 1 billion tokens per month is more than enough for the ai to make decisions
+tool calls/function calls will be used to provide navigation capabilities to the ai
 
 # TODO
 https://3.basecamp.com/6057355/buckets/44056728/todosets/9092310725

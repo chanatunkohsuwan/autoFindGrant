@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import re
 import requests
@@ -13,6 +14,18 @@ from dotenv import load_dotenv
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 mistral_client = Mistral(api_key=MISTRAL_API_KEY)
     
+def fetch_html(url: str) -> str:
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
+        else:
+            print(f"Error fetching url {url}")
+            return
+    except requests.RequestException:
+        print(f"Error fetching url {url}")
+        return
+
 def clean_soup(soup: BeautifulSoup) -> str:
     # remove useless html filler slop
     for tag in soup(["script", "style", "noscript", "iframe", "svg"]):
@@ -28,30 +41,35 @@ def clean_soup(soup: BeautifulSoup) -> str:
     text = "\n".join([line for line in str(soup).splitlines() if line])
     return text
 
-def find_sponsor_page_link(soup: BeautifulSoup) -> str:
+
+def search_sponsor_page_url(soup: BeautifulSoup) -> str:
     # simple soup search for now but will add more complicated filtering if needed
-    return [a.get('href') for a in soup.find_all('a', href=True)][0]
+    urls = [a.get('href') for a in soup.find_all('a', href=True)]
+    if len(urls) == 0:
+        return
+    else:
+        return urls[0]
 
+with open("prompts.json", "r") as f:
+    prompts = json.load(f)
 
-
-# test for the soupening
-url = "https://frc5190.org/sponsors/"
-
-response = requests.get(url).text
-soup = BeautifulSoup(response, "html.parser")
-page = clean_soup(soup)
-
-with open("output.out", "w", encoding="utf-8") as f:
-    f.write(response)
-
-
-
-def get_sponsors(link: str):
-    """
-    AI chooses whether to advance, quit, or list sponsors
-    TODO
-    """
-    pass
+def get_sponsors(url: str, tries=10):
+    # run the function recursively to search the webpage
+    html = fetch_html(url)
+    if html == None:
+        return
+    soup = BeautifulSoup(html, "html.parser")
+    sponsor_url = search_sponsor_page_url()
+    if sponsor_url == None:
+        text = clean_soup(soup)
+        # call ai
+        messages = [
+            {
+                "role": "system",
+                "content": prompts["navigation"]
+            },
+        ]
+        # TODO: call the ai and set up tools and recursive navigation
 
 
 def gather_team_info(number: int) -> dict:
@@ -72,15 +90,13 @@ async def request_chat_completion(messages, retries=5):
         else:
             raise(e)
 
-def __init__():
-    try:
-        team_number = int(input("Enter a FRC team number"))
-    except TypeError:
-        raise TypeError("Team number (input) must be an integer")
-    if 0 < team_number < 10000:
-        team_data = gather_team_info(team_number)
-        if team_data["website_url"]:
-            get_sponsors(team_data["website_url"])
-    else:
-        raise ValueError("Invalid team number, range = 1 - 9999")
-    f.write(page)
+try:
+    team_number = int(input("Enter a FRC team number"))
+except TypeError:
+    raise TypeError("Team number (input) must be an integer")
+if 0 < team_number < 10000:
+    team_data = gather_team_info(team_number)
+    if team_data["website_url"]:
+        get_sponsors(team_data["website_url"])
+else:
+    raise ValueError("Invalid team number, range = 1 - 9999")
