@@ -13,6 +13,7 @@ def clean_html(html: str) -> str:
         tag.decompose()
     for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
         comment.extract()
+
     # unwrap everything else
     keep = {"a", "button", "h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "ul", "ol"}
     for tag in soup.find_all(True):
@@ -22,11 +23,6 @@ def clean_html(html: str) -> str:
     text = "\n".join([line for line in str(soup).splitlines() if line])
     return text
 
-
-url = "https://example.com"
-response = clean_html(requests.get(url).text)
-with open("output.out", "w", encoding="utf-8") as f:
-    f.write(response)
 
 def get_sponsors(cleaned_html: str):
     """
@@ -42,7 +38,15 @@ def gather_team_info(number: int) -> dict:
     pass
 
 
-def __init__():
+if __name__ == "__main__":
+    # for testing currently
+    url = "https://frc5190.org"
+    response = clean_html(requests.get(url).text)
+    with open("output.out", "w", encoding="utf-8") as f:
+        f.write(response)
+
+    raise NotImplementedError("TODO")
+
     try:
         team_number = int(input("Enter a FRC team number"))
     except TypeError:
@@ -53,3 +57,4 @@ def __init__():
             get_sponsors(team_data["website_url"])
     else:
         raise ValueError("Invalid team number, range = 1 - 9999")
+    

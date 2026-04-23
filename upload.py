@@ -1,3 +1,5 @@
+# gotta read the docs more
+
 from sqlalchemy import ForeignKey, String, DeclarativeBase, Mapped, mapped_column, relationship
 
 class team(Base):
