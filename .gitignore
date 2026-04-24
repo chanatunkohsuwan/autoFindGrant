@@ -4,3 +4,4 @@ api.md
 *.out
 .env
 test*.*
+__pycache__
