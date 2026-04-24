@@ -24,7 +24,7 @@ if __name__ == "__main__":
         teamData = {}
         teamData = fetcher.gather_team_info
 
-        fetcher.fetch_html(teamData["website_url"])
+        fetcher.get_sponsors(teamData["website_url"])
 
 
 

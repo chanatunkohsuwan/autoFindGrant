@@ -33,7 +33,7 @@ def gather_team_info(team_number: int) -> dict:
     if response.status_code == 200:
         return response.json()
     raise NotImplementedError("Error handling not yet developed")
-
+    # TODO: Implement cleaning to prepare loading for db (ex: setting stuff as NULL)
 
 def fetch_html(url: str) -> str:
     try:
@@ -90,6 +90,7 @@ def get_sponsors(url: str, tries=10):
         ]
         # TODO: call the ai and set up tools and recursive navigation
 
+
 async def request_chat_completion(messages, retries=5):
     try:
         response = mistral_client.chat.complete_async(
@@ -102,8 +103,6 @@ async def request_chat_completion(messages, retries=5):
             return await request_chat_completion(messages, retries=retries-1)
         else:
             raise(e)
-
-
 
 
 if __name__ == "__main__":
