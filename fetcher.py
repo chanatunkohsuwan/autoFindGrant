@@ -1,4 +1,6 @@
-# look at the upload.py, lets try to get all that info
+# look at the upload.py, lets try to get all that info to load
+# ima try to organize the methods here to be in order of what will be called in main.py 
+# or just have core higher up and utilities/fallbacks lower
 
 import asyncio
 import json
@@ -16,6 +18,10 @@ MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY")
 BLUE_ALLIANCE_API_KEY = os.environ.get("BLUE_ALLIANCE_API_KEY")
 
 mistral_client = Mistral(api_key=MISTRAL_API_KEY)
+
+with open("prompts.json", "r") as f:
+    prompts = json.load(f)
+
 
 def gather_team_info(team_number: int) -> dict:
     team_key = f"frc{team_number}"
@@ -66,9 +72,6 @@ def search_sponsor_page_url(soup: BeautifulSoup) -> str:
     else:
         return urls[0]
 
-with open("prompts.json", "r") as f:
-    prompts = json.load(f)
-
 def get_sponsors(url: str, tries=10):
     # run the function recursively to search the webpage
     html = fetch_html(url)
@@ -99,7 +102,7 @@ async def request_chat_completion(messages, retries=5):
             return await request_chat_completion(messages, retries=retries-1)
         else:
             raise(e)
-        
+
 
 
 
