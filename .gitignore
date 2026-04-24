@@ -3,3 +3,4 @@ venv
 api.md
 *.out
 .env
+test*.*
