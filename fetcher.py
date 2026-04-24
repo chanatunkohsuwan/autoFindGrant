@@ -17,6 +17,18 @@ BLUE_ALLIANCE_API_KEY = os.environ.get("BLUE_ALLIANCE_API_KEY")
 
 mistral_client = Mistral(api_key=MISTRAL_API_KEY)
 
+def gather_team_info(team_number: int) -> dict:
+    team_key = f"frc{team_number}"
+    url = f"https://www.thebluealliance.com/api/v3/team/{team_key}"
+    headers = {
+        "X-TBA-Auth-Key": BLUE_ALLIANCE_API_KEY
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    raise NotImplementedError("Error handling not yet developed")
+
+
 def fetch_html(url: str) -> str:
     try:
         response = requests.get(url)
@@ -75,40 +87,6 @@ def get_sponsors(url: str, tries=10):
         ]
         # TODO: call the ai and set up tools and recursive navigation
 
-
-def gather_team_info(team_number: int) -> dict:
-    # will pull from API containing website of team given int
-    # TBA api?
-    team_key = f"frc{team_number}"
-    url = f"https://www.thebluealliance.com/api/v3/team/{team_key}"
-    headers = {
-        "X-TBA-Auth-Key": BLUE_ALLIANCE_API_KEY
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        
-
-if __name__ == "__main__":
-    # for testing currently
-    url = "https://frc5190.org"
-    response = clean_html(requests.get(url).text)
-    with open("output.out", "w", encoding="utf-8") as f:
-        f.write(response)
-
-    raise NotImplementedError("TODO")
-
-    try:
-        team_number = int(input("Enter a FRC team number"))
-    except TypeError:
-        raise TypeError("Team number (input) must be an integer")
-    if 0 < team_number < 10000:
-        team_data = gather_team_info(team_number)
-        if team_data["website_url"]:
-            get_sponsors(team_data["website_url"])
-    else:
-        raise ValueError("Invalid team number, range = 1 - 9999")
-    
 async def request_chat_completion(messages, retries=5):
     try:
         response = mistral_client.chat.complete_async(
@@ -122,4 +100,14 @@ async def request_chat_completion(messages, retries=5):
         else:
             raise(e)
         
+
+
+
+if __name__ == "__main__":
+    # write whatever tests here.
+    
+    
+    
+    
+    pass
 
