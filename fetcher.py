@@ -30,10 +30,12 @@ def gather_team_info(team_number: int) -> dict:
         "X-TBA-Auth-Key": BLUE_ALLIANCE_API_KEY
     }
     response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
+    if 
+    if response.status_code == 200 return response.json()
+    
     raise NotImplementedError("Error handling not yet developed")
     # TODO: Implement cleaning to prepare loading for db (ex: setting stuff as NULL)
+
 
 def fetch_html(url: str) -> str:
     try:
@@ -46,6 +48,7 @@ def fetch_html(url: str) -> str:
     except requests.RequestException:
         print(f"Error fetching url {url}")
         return
+
 
 def clean_soup(soup: BeautifulSoup) -> str:
     # remove useless html filler slop
@@ -71,6 +74,7 @@ def search_sponsor_page_url(soup: BeautifulSoup) -> str:
         return
     else:
         return urls[0]
+
 
 def get_sponsors(url: str, tries=10):
     # run the function recursively to search the webpage
