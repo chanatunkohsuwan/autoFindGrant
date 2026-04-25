@@ -1,5 +1,5 @@
 from sys import exit
-import fetcher # should we do fetcher import * instead?
+import fetcher # should we do fetcher import * instead? A: yeah
 test_mode = True
 
 

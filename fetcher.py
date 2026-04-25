@@ -13,6 +13,9 @@ from sys import exit
 from mistralai.client import Mistral
 from mistralai.client.models import UserMessage
 
+import upload
+from upload import Team
+
 dotenv.load_dotenv()
 MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY")
 BLUE_ALLIANCE_API_KEY = os.environ.get("BLUE_ALLIANCE_API_KEY")
@@ -30,22 +33,17 @@ def gather_team_info(team_number: int) -> dict:
         "X-TBA-Auth-Key": BLUE_ALLIANCE_API_KEY
     }
     response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    raise NotImplementedError("Error handling not yet developed")
-    # TODO: Implement cleaning to prepare loading for db (ex: setting stuff as NULL)
+    response.raise_for_status()
+    json_response = json.loads(response.json)
+    team = Team()
+    team.id = json_response.id
+    team.name = json_response.name
+    
 
 def fetch_html(url: str) -> str:
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.text
-        else:
-            print(f"Error fetching url {url}")
-            return
-    except requests.RequestException:
-        print(f"Error fetching url {url}")
-        return
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.text
 
 def clean_soup(soup: BeautifulSoup) -> str:
     # remove useless html filler slop
