@@ -40,6 +40,7 @@ def gather_team_info(team_number: int) -> dict:
     team.name = json_response.name
     
 
+
 def fetch_html(url: str) -> str:
     response = requests.get(url)
     response.raise_for_status()
@@ -69,6 +70,7 @@ def search_sponsor_page_url(soup: BeautifulSoup) -> str:
         return
     else:
         return urls[0]
+
 
 def get_sponsors(url: str, tries=10):
     # run the function recursively to search the webpage
