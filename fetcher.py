@@ -8,6 +8,7 @@ import os
 import dotenv
 import re
 import requests
+from requests import Response
 from bs4 import BeautifulSoup, Comment
 from sys import exit
 from mistralai.client import Mistral
@@ -25,21 +26,20 @@ mistral_client = Mistral(api_key=MISTRAL_API_KEY)
 with open("prompts.json", "r") as f:
     prompts = json.load(f)
 
-
-def gather_team_info(team_number: int) -> dict:
-    team_key = f"frc{team_number}"
-    url = f"https://www.thebluealliance.com/api/v3/team/{team_key}"
+def request_team_info(team_number: int, endpoint: str = "") -> Response:
+    url = f"https://www.thebluealliance.com/api/v3/team/frc{team_number}{endpoint}"
     headers = {
         "X-TBA-Auth-Key": BLUE_ALLIANCE_API_KEY
     }
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    json_response = json.loads(response.json)
-    team = Team()
-    team.id = json_response.id
-    team.name = json_response.name
-    
+    return json.loads(response.json)
 
+def gather_team_info(team_number: int) -> dict:
+    team_info = request_team_info(team_number)
+    events = request_team_info(team_number, "/events")
+    worlds_count = sum([event for event in events if event["event_type"] == 3])
+    team_info["worlds"] = worlds_count
 
 def fetch_html(url: str) -> str:
     response = requests.get(url)
